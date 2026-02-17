@@ -1,0 +1,49 @@
+<%- include('partials/header') %>
+
+<h1>Metrics</h1>
+
+<div class="cards">
+  <div class="card">
+    <div class="label">Total tokens (all projects)</div>
+    <div class="value"><%= totals.tokens.toLocaleString() %></div>
+  </div>
+  <div class="card">
+    <div class="label">Estimated cost (USD)</div>
+    <div class="value">$<%= totals.cost.toFixed(4) %></div>
+  </div>
+  <div class="card">
+    <div class="label">Tasks tracked</div>
+    <div class="value"><%= totals.tasks.toLocaleString() %></div>
+  </div>
+  <div class="card">
+    <div class="label">Projects tracked</div>
+    <div class="value"><%= totals.projects.toLocaleString() %></div>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>By project</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Project</th>
+        <th>Tokens</th>
+        <th>Cost (USD)</th>
+        <th>Tasks</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const row of byProject) { %>
+        <tr>
+          <td><%= row.project %></td>
+          <td class="mono"><%= row.tokens.toLocaleString() %></td>
+          <td class="mono">$<%= row.cost.toFixed(4) %></td>
+          <td class="mono"><%= row.tasks.toLocaleString() %></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+  <div class="hint">Token/cost values are based on what Mission Control has recorded per task. (Next: wire this to OpenClaw usage endpoints if/when exposed.)</div>
+</div>
+
+<%- include('partials/footer') %>

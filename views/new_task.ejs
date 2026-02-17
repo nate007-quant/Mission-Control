@@ -8,9 +8,19 @@
   </label>
 
   <label>
+    <div class="lbl">Project</div>
+    <input name="project" value="Mission Control" placeholder="e.g. Mission Control" />
+    <div class="hint">High-level project label for tracking tokens/cost and organizing work.</div>
+  </label>
+
+  <label>
     <div class="lbl">Assign to agent</div>
-    <input name="agent_id" value="platformengineer" placeholder="platformengineer" />
-    <div class="hint">Use an OpenClaw agent id (e.g. platformengineer).</div>
+    <select name="agent_id">
+      <% for (const a of agents) { %>
+        <option value="<%= a.id %>"><%= a.id %></option>
+      <% } %>
+    </select>
+    <div class="hint">Pulled from registered OpenClaw agents.</div>
   </label>
 
   <label>

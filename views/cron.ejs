@@ -1,0 +1,45 @@
+<%- include('partials/header') %>
+
+<h1>Cron jobs</h1>
+
+<div class="panel">
+  <div class="muted">Live view from OpenClaw cron scheduler.</div>
+</div>
+
+<div class="panel">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Enabled</th>
+        <th>Schedule</th>
+        <th>Next run</th>
+        <th>Session</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const j of jobs) { %>
+        <tr>
+          <td><span class="mono"><%= j.id || j.jobId %></span></td>
+          <td><%= j.name || '' %></td>
+          <td><%= (j.enabled === false) ? 'no' : 'yes' %></td>
+          <td>
+            <div class="muted"><%= j.schedule?.kind %></div>
+            <div class="mono"><%= j.schedule?.expr || j.schedule?.at || (j.schedule?.everyMs ? (j.schedule.everyMs + 'ms') : '') %></div>
+          </td>
+          <td>
+            <div class="mono"><%= j.nextRunAt || j.next_run_at || '' %></div>
+          </td>
+          <td><%= j.sessionTarget || '' %></td>
+          <td style="white-space:nowrap">
+            <a class="btn" href="/cron/<%= j.id || j.jobId %>">Edit</a>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('partials/footer') %>

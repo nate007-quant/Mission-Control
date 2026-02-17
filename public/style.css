@@ -1,18 +1,39 @@
 :root{
-  --bg:#0b1020;
-  --panel:#121a32;
-  --text:#e7ecff;
-  --muted:#9aa6d6;
-  --line:#243057;
-  --accent:#6aa9ff;
+  --bg0:#05070f;
+  --bg1:#0a1022;
+  --panel: rgba(255,255,255,0.06);
+  --panel2: rgba(255,255,255,0.085);
+  --text:#e9eeff;
+  --muted:#a9b4e3;
+  --line: rgba(255,255,255,0.12);
+  --line2: rgba(255,255,255,0.18);
+  --accent:#78b1ff;
+  --accent2:#b59cff;
   --ok:#2bd576;
   --warn:#f7c948;
   --bad:#ff5c7a;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:linear-gradient(180deg,var(--bg),#070a14);color:var(--text)}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);background:rgba(18,26,50,0.8);backdrop-filter: blur(8px);position:sticky;top:0}
-.brand a{color:var(--text);text-decoration:none;font-weight:700;letter-spacing:0.2px}
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  color:var(--text);
+  background:
+    radial-gradient(900px 600px at 20% -10%, rgba(120,177,255,0.28), transparent 55%),
+    radial-gradient(700px 500px at 90% 0%, rgba(181,156,255,0.20), transparent 55%),
+    radial-gradient(900px 700px at 50% 115%, rgba(43,213,118,0.10), transparent 60%),
+    linear-gradient(180deg, var(--bg1), var(--bg0));
+}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;
+  border-bottom:1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.05));
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  position:sticky;top:0
+}
+.brand a{color:var(--text);text-decoration:none;font-weight:750;letter-spacing:0.2px}
 .nav a{color:var(--muted);text-decoration:none;margin-left:14px}
 .nav a:hover{color:var(--text)}
 .container{max-width:1100px;margin:18px auto;padding:0 18px}
@@ -22,17 +43,19 @@ h1{margin:6px 0 14px;font-size:28px}
 h2{margin:0 0 12px;font-size:18px}
 
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:12px;box-shadow:0 10px 40px rgba(0,0,0,0.25)}
 .card .label{color:var(--muted);font-size:12px}
 .card .value{font-size:26px;font-weight:800;margin-top:2px}
 
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:14px;box-shadow:0 16px 60px rgba(0,0,0,0.28)}
 .kv{display:grid;grid-template-columns:1fr;gap:6px}
 .kv .k{display:inline-block;min-width:160px;color:var(--muted)}
 .kv .v{color:var(--text)}
 
 table{width:100%;border-collapse:collapse}
 th,td{padding:10px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table tr:hover td{background:rgba(255,255,255,0.03)}
+.mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
 th{color:var(--muted);font-size:12px;font-weight:600;letter-spacing:0.3px}
 
 .pill{padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line)}
@@ -46,7 +69,7 @@ th{color:var(--muted);font-size:12px;font-weight:600;letter-spacing:0.3px}
 .btn.primary{background:rgba(106,169,255,0.18);border-color:rgba(106,169,255,0.45)}
 
 .form{display:grid;gap:12px;max-width:720px}
-input,textarea{width:100%;border:1px solid var(--line);background:rgba(7,10,20,0.55);color:var(--text);border-radius:10px;padding:10px;font-size:14px}
+input,textarea,select{width:100%;border:1px solid var(--line);background:rgba(0,0,0,0.28);color:var(--text);border-radius:12px;padding:10px;font-size:14px;backdrop-filter: blur(10px) saturate(140%);-webkit-backdrop-filter: blur(10px) saturate(140%)}
 textarea{resize:vertical}
 .lbl{color:var(--muted);font-size:12px;margin-bottom:6px}
 .hint{color:var(--muted);font-size:12px;margin-top:6px}

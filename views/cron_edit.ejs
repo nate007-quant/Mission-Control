@@ -1,0 +1,33 @@
+<%- include('partials/header') %>
+
+<h1>Edit cron job</h1>
+
+<div class="panel">
+  <div class="kv">
+    <div><span class="k">Job ID</span> <span class="v mono"><%= job.id || job.jobId %></span></div>
+    <div><span class="k">Name</span> <span class="v"><%= job.name || '' %></span></div>
+    <div><span class="k">Schedule</span> <span class="v mono"><%= JSON.stringify(job.schedule || {}, null, 0) %></span></div>
+    <div><span class="k">Next run</span> <span class="v mono"><%= job.nextRunAt || job.next_run_at || '' %></span></div>
+  </div>
+</div>
+
+<form method="post" action="/cron/<%= job.id || job.jobId %>" class="form">
+  <label>
+    <div class="lbl">Enabled</div>
+    <select name="enabled">
+      <option value="true" <%= (job.enabled === false) ? '' : 'selected' %>>true</option>
+      <option value="false" <%= (job.enabled === false) ? 'selected' : '' %>>false</option>
+    </select>
+  </label>
+
+  <label>
+    <div class="lbl">Schedule JSON</div>
+    <textarea name="schedule_json" rows="6" placeholder='{"kind":"cron","expr":"*/5 * * * *"}'><%= JSON.stringify(job.schedule || {}, null, 2) %></textarea>
+    <div class="hint">Edit carefully. This is passed as-is to OpenClaw cron update.</div>
+  </label>
+
+  <button class="btn primary" type="submit">Save</button>
+  <a class="btn" href="/cron">Cancel</a>
+</form>
+
+<%- include('partials/footer') %>
