@@ -187,3 +187,18 @@ app.get('/metrics', (req, res) => {
     byProject
   });
 });
+
+// --- Metrics (OpenClaw sessions usage) ---
+app.get('/metrics/openclaw', async (req, res) => {
+  const active = req.query.active ? Number(req.query.active) : null;
+  let sessions = [];
+  let err = '';
+  try {
+    const out = await (await import('./openclaw_api.js')).then(m => m.sessionsList(active));
+    sessions = out?.sessions || [];
+  } catch (e) {
+    err = String(e?.message || e);
+    sessions = [];
+  }
+  res.render('metrics_openclaw', { sessions, err, active });
+});
