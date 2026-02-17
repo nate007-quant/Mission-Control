@@ -9,7 +9,11 @@
 
   <label>
     <div class="lbl">Project</div>
-    <input name="project" value="Mission Control" placeholder="e.g. Mission Control" />
+    <select name="project">
+      <% for (const p of projects) { %>
+        <option value="<%= p.name %>" <%= (p.name === 'Mission Control') ? 'selected' : '' %>><%= p.name %></option>
+      <% } %>
+    </select>
     <div class="hint">High-level project label for tracking tokens/cost and organizing work.</div>
   </label>
 

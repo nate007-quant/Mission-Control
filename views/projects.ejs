@@ -1,0 +1,39 @@
+<%- include('partials/header') %>
+
+<h1>Projects</h1>
+
+<div class="panel">
+  <a class="btn primary" href="/projects/new">New project</a>
+</div>
+
+<div class="panel">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Default agent</th>
+        <th>Links</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const p of projects) { %>
+        <tr>
+          <td class="mono"><%= p.id %></td>
+          <td>
+            <div><strong><%= p.name %></strong></div>
+            <div class="muted"><%= p.description || '' %></div>
+          </td>
+          <td class="mono"><%= p.default_agent_id || '' %></td>
+          <td class="mono"><%= p.links || '' %></td>
+          <td style="white-space:nowrap">
+            <a class="btn" href="/projects/<%= p.id %>">Edit</a>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('partials/footer') %>

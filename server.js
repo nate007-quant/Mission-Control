@@ -15,6 +15,53 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
+// --- Live events (SSE) ---
+const sseClients = new Set();
+function sseSend(event, data) {
+  const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
+  for (const res of sseClients) {
+    try { res.write(payload); } catch {}
+  }
+}
+
+app.get('/events', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  // If compression middleware ever gets added, it can break SSE.
+  res.flushHeaders?.();
+
+  sseClients.add(res);
+
+  // initial push
+  const data = load();
+  const tasks = [...(data.tasks || [])]
+    .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''))
+    .slice(0, 200);
+
+  res.write(`event: tasks\ndata: ${JSON.stringify({ tasks })}\n\n`);
+
+  req.on('close', () => {
+    sseClients.delete(res);
+  });
+});
+
+let lastTasksJson = '';
+setInterval(() => {
+  if (!sseClients.size) return;
+  const data = load();
+  const tasks = [...(data.tasks || [])]
+    .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''))
+    .slice(0, 200);
+
+  const json = JSON.stringify(tasks);
+  if (json !== lastTasksJson) {
+    lastTasksJson = json;
+    sseSend('tasks', { tasks });
+    for (const t of tasks) sseSend('task', { task: t });
+  }
+}, 1500);
+
 function counts(tasks) {
   const c = { queued: 0, running: 0, done: 0, failed: 0 };
   for (const t of tasks) c[t.status] = (c[t.status] || 0) + 1;
@@ -35,20 +82,23 @@ app.get('/', (req, res) => {
 app.get('/tasks', (req, res) => {
   const data = load();
   const status = req.query.status;
+  const project = String(req.query.project || '').trim();
+
   let tasks = [...data.tasks].sort((a, b) => (b.created_at || '').localeCompare(a.created_at || '')).slice(0, 200);
   if (['queued', 'running', 'done', 'failed'].includes(status)) tasks = tasks.filter(t => t.status === status);
-  res.render('tasks', { tasks, status });
+  if (project) tasks = tasks.filter(t => String(t.project || '') === project);
+
+  const projects = (data.projects || []).slice().sort((a,b) => String(a.name).localeCompare(String(b.name)));
+  res.render('tasks', { tasks, status, project, projects });
 });
 
 app.get('/tasks/new', async (req, res) => {
+  const data = load();
   let agents = [];
-  try {
-    agents = await listAgents();
-  } catch {
-    agents = [{ id: 'platformengineer' }];
-  }
+  try { agents = await listAgents(); } catch { agents = [{ id: 'platformengineer' }]; }
   if (!agents.length) agents = [{ id: 'platformengineer' }];
-  res.render('new_task', { agents });
+  const projects = (data.projects || []).slice().sort((a,b) => String(a.name).localeCompare(String(b.name)));
+  res.render('new_task', { agents, projects });
 });
 
 app.post('/tasks/new', (req, res) => {
@@ -201,4 +251,79 @@ app.get('/metrics/openclaw', async (req, res) => {
     sessions = [];
   }
   res.render('metrics_openclaw', { sessions, err, active });
+});
+
+// --- Projects ---
+app.get('/projects', (req, res) => {
+  const data = load();
+  const projects = (data.projects || []).slice().sort((a, b) => String(a.name).localeCompare(String(b.name)));
+  res.render('projects', { projects });
+});
+
+app.get('/projects/new', async (req, res) => {
+  let agents = [];
+  try { agents = await listAgents(); } catch { agents = [{ id: 'platformengineer' }]; }
+  if (!agents.length) agents = [{ id: 'platformengineer' }];
+  res.render('project_new', { agents });
+});
+
+app.post('/projects/new', (req, res) => {
+  const data = load();
+  const name = String(req.body.name || '').trim();
+  if (!name) return res.status(400).send('Name required');
+  if ((data.projects || []).some(p => String(p.name).toLowerCase() === name.toLowerCase())) {
+    return res.status(400).send('Project name already exists');
+  }
+  const id = data.next_project_id++;
+  const project = {
+    id,
+    name,
+    description: String(req.body.description || '').trim(),
+    default_agent_id: String(req.body.default_agent_id || 'platformengineer').trim() || 'platformengineer',
+    links: String(req.body.links || '').trim()
+  };
+  data.projects ||= [];
+  data.projects.push(project);
+  save(data);
+  res.redirect('/projects');
+});
+
+app.get('/projects/:id', async (req, res) => {
+  const data = load();
+  const id = Number(req.params.id);
+  const project = (data.projects || []).find(p => p.id === id);
+  if (!project) return res.status(404).send('Project not found');
+  let agents = [];
+  try { agents = await listAgents(); } catch { agents = [{ id: 'platformengineer' }]; }
+  if (!agents.length) agents = [{ id: 'platformengineer' }];
+  res.render('project_edit', { project, agents });
+});
+
+app.post('/projects/:id', (req, res) => {
+  const data = load();
+  const id = Number(req.params.id);
+  const project = (data.projects || []).find(p => p.id === id);
+  if (!project) return res.status(404).send('Project not found');
+
+  const oldName = project.name;
+
+  const name = String(req.body.name || '').trim();
+  if (!name) return res.status(400).send('Name required');
+  const conflict = (data.projects || []).some(p => p.id !== id && String(p.name).toLowerCase() === name.toLowerCase());
+  if (conflict) return res.status(400).send('Project name already exists');
+
+  project.name = name;
+  project.description = String(req.body.description || '').trim();
+  project.default_agent_id = String(req.body.default_agent_id || 'platformengineer').trim() || 'platformengineer';
+  project.links = String(req.body.links || '').trim();
+
+  // Keep tasks aligned if they referenced the old name
+  for (const t of data.tasks || []) {
+    if (t.project && String(t.project) === String(oldName)) {
+      t.project = project.name;
+    }
+  }
+
+  save(data);
+  res.redirect('/projects');
 });

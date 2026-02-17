@@ -12,6 +12,16 @@ function defaultData() {
       last_dispatch_at: ""
     },
     next_task_id: 1,
+    next_project_id: 1,
+    projects: [
+      {
+        id: 1,
+        name: "Mission Control",
+        description: "Dashboard for interacting with OpenClaw",
+        default_agent_id: "platformengineer",
+        links: "https://github.com/nate007-quant/Mission-Control"
+      }
+    ],
     tasks: []
   };
 }
@@ -23,6 +33,8 @@ function load() {
     // minimal migration
     data.settings ||= defaultData().settings;
     data.next_task_id ||= 1;
+    data.next_project_id ||= 1;
+    data.projects ||= defaultData().projects;
     data.tasks ||= [];
     return data;
   } catch {

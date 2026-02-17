@@ -1,15 +1,23 @@
 <%- include('partials/header') %>
 
-<h1>Tasks</h1>
+<h1>Tasks <span id="liveBadge" class="pill queued" style="margin-left:8px">Live</span></h1>
 <div class="filters">
   <a class="btn" href="/tasks">All</a>
   <a class="btn" href="/tasks?status=queued">Queued</a>
   <a class="btn" href="/tasks?status=running">Running</a>
   <a class="btn" href="/tasks?status=done">Done</a>
   <a class="btn" href="/tasks?status=failed">Failed</a>
+
+  <span style="margin-left:10px" class="muted">Project:</span>
+  <select onchange="location.href='/tasks?<%= status ? ('status=' + encodeURIComponent(status) + '&') : '' %>project=' + encodeURIComponent(this.value)" style="display:inline-block;width:auto;min-width:220px">
+    <option value="">(all)</option>
+    <% for (const p of projects || []) { %>
+      <option value="<%= p.name %>" <%= (p.name === project) ? 'selected' : '' %>><%= p.name %></option>
+    <% } %>
+  </select>
 </div>
 
-<table>
+<table data-live-tasks>
   <thead>
     <tr>
       <th>ID</th><th>Title</th><th>Agent</th><th>Status</th><th>Created</th>

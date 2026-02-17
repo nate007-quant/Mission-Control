@@ -1,0 +1,34 @@
+<%- include('partials/header') %>
+
+<h1>New project</h1>
+
+<form method="post" action="/projects/new" class="form">
+  <label>
+    <div class="lbl">Name</div>
+    <input name="name" placeholder="e.g. Mission Control" required />
+  </label>
+
+  <label>
+    <div class="lbl">Description</div>
+    <textarea name="description" rows="4" placeholder="What is this project?"></textarea>
+  </label>
+
+  <label>
+    <div class="lbl">Default agent id</div>
+    <select name="default_agent_id">
+      <% for (const a of agents) { %>
+        <option value="<%= a.id %>"><%= a.id %></option>
+      <% } %>
+    </select>
+  </label>
+
+  <label>
+    <div class="lbl">Links</div>
+    <input name="links" placeholder="https://github.com/..." />
+  </label>
+
+  <button class="btn primary" type="submit">Create</button>
+  <a class="btn" href="/projects">Cancel</a>
+</form>
+
+<%- include('partials/footer') %>

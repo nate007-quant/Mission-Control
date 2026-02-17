@@ -1,0 +1,34 @@
+<%- include('partials/header') %>
+
+<h1>Edit project</h1>
+
+<form method="post" action="/projects/<%= project.id %>" class="form">
+  <label>
+    <div class="lbl">Name</div>
+    <input name="name" value="<%= project.name %>" required />
+  </label>
+
+  <label>
+    <div class="lbl">Description</div>
+    <textarea name="description" rows="4"><%= project.description || '' %></textarea>
+  </label>
+
+  <label>
+    <div class="lbl">Default agent id</div>
+    <select name="default_agent_id">
+      <% for (const a of agents) { %>
+        <option value="<%= a.id %>" <%= (a.id === project.default_agent_id) ? 'selected' : '' %>><%= a.id %></option>
+      <% } %>
+    </select>
+  </label>
+
+  <label>
+    <div class="lbl">Links</div>
+    <input name="links" value="<%= project.links || '' %>" />
+  </label>
+
+  <button class="btn primary" type="submit">Save</button>
+  <a class="btn" href="/projects">Cancel</a>
+</form>
+
+<%- include('partials/footer') %>
