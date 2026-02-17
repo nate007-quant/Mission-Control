@@ -1,0 +1,30 @@
+<%- include('partials/header') %>
+
+<h1>Task #<%= task.id %></h1>
+
+<section class="panel">
+  <div class="kv">
+    <div><span class="k">Title</span><span class="v"><%= task.title %></span></div>
+    <div><span class="k">Status</span><span class="v"><span class="pill <%= task.status %>"><%= task.status %></span></span></div>
+    <div><span class="k">Agent</span><span class="v"><code><%= task.agent_id %></code></span></div>
+    <div><span class="k">Session</span><span class="v"><%= task.session_key || '—' %></span></div>
+    <div><span class="k">Created</span><span class="v"><%= task.created_at %></span></div>
+    <div><span class="k">Started</span><span class="v"><%= task.started_at || '—' %></span></div>
+    <div><span class="k">Finished</span><span class="v"><%= task.finished_at || '—' %></span></div>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Description</h2>
+  <pre class="pre"><%= task.description %></pre>
+</section>
+
+<section class="panel">
+  <h2>Log</h2>
+  <% if (task.last_error) { %>
+    <div class="flash error">Last error: <%= task.last_error %></div>
+  <% } %>
+  <pre class="pre"><%= task.log || '' %></pre>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Tasks</h1>
+  <div class="filters">
+    <a class="btn" href="{{ url_for('tasks') }}">All</a>
+    <a class="btn" href="{{ url_for('tasks', status='queued') }}">Queued</a>
+    <a class="btn" href="{{ url_for('tasks', status='running') }}">Running</a>
+    <a class="btn" href="{{ url_for('tasks', status='done') }}">Done</a>
+    <a class="btn" href="{{ url_for('tasks', status='failed') }}">Failed</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>Title</th><th>Agent</th><th>Status</th><th>Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in tasks %}
+        <tr>
+          <td><a href="{{ url_for('task_detail', task_id=t.id) }}">{{ t.id }}</a></td>
+          <td>{{ t.title }}</td>
+          <td><code>{{ t.agent_id }}</code></td>
+          <td><span class="pill {{ t.status }}">{{ t.status }}</span></td>
+          <td class="muted">{{ t.created_at }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

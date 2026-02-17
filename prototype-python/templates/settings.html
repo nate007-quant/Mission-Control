@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Settings</h1>
+
+  <section class="panel">
+    <form method="post" class="form">
+      <label>
+        <div class="lbl">Dispatcher interval (hours)</div>
+        <input name="dispatch_interval_hours" value="{{ interval }}" />
+        <div class="hint">Default is 12. This controls how often OpenClaw looks for queued work.</div>
+      </label>
+      <button class="btn primary" type="submit">Save</button>
+    </form>
+
+    <div class="kv" style="margin-top:16px;">
+      <div><span class="k">Last dispatch</span><span class="v">{{ last_dispatch_at or '—' }}</span></div>
+    </div>
+  </section>
+{% endblock %}

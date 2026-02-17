@@ -1,0 +1,43 @@
+<%- include('partials/header') %>
+
+<h1>Status</h1>
+
+<section class="cards">
+  <div class="card"><div class="label">Queued</div><div class="value"><%= counts.queued %></div></div>
+  <div class="card"><div class="label">Running</div><div class="value"><%= counts.running %></div></div>
+  <div class="card"><div class="label">Done</div><div class="value"><%= counts.done %></div></div>
+  <div class="card"><div class="label">Failed</div><div class="value"><%= counts.failed %></div></div>
+</section>
+
+<section class="panel">
+  <h2>Dispatcher</h2>
+  <div class="kv">
+    <div><span class="k">Check interval (hours)</span><span class="v"><%= interval %></span></div>
+    <div><span class="k">Last dispatch</span><span class="v"><%= last_dispatch_at || '—' %></span></div>
+  </div>
+  <p class="muted">OpenClaw runs a periodic “dispatcher tick” to pick up queued tasks and spawn the right agent.</p>
+</section>
+
+<section class="panel">
+  <h2>Recent tasks</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>Title</th><th>Agent</th><th>Status</th><th>Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const t of tasks) { %>
+        <tr>
+          <td><a href="/tasks/<%= t.id %>"><%= t.id %></a></td>
+          <td><%= t.title %></td>
+          <td><code><%= t.agent_id %></code></td>
+          <td><span class="pill <%= t.status %>"><%= t.status %></span></td>
+          <td class="muted"><%= t.created_at %></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</section>
+
+<%- include('partials/footer') %>

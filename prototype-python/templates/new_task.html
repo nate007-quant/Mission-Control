@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>New task</h1>
+  <form method="post" class="form">
+    <label>
+      <div class="lbl">Title</div>
+      <input name="title" placeholder="e.g. Draft plan for X" required />
+    </label>
+
+    <label>
+      <div class="lbl">Assign to agent</div>
+      <input name="agent_id" value="platformengineer" placeholder="platformengineer" />
+      <div class="hint">Use an OpenClaw agent id (e.g. platformengineer).</div>
+    </label>
+
+    <label>
+      <div class="lbl">Description</div>
+      <textarea name="description" rows="8" placeholder="What should be done? Acceptance criteria? Links?"></textarea>
+    </label>
+
+    <button class="btn primary" type="submit">Add to queue</button>
+  </form>
+{% endblock %}

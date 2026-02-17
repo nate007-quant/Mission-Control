@@ -1,0 +1,6 @@
+node_modules/
+mission_control.json
+*.sqlite
+.venv/
+prototype-python/.venv/
+.DS_Store
